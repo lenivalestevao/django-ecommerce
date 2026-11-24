@@ -1,0 +1,8 @@
+{% load shop_extras %}
+<dl class="totals">
+    <div><dt>Subtotal</dt><dd>{{ totals.subtotal|money }}</dd></div>
+    {% if totals.discount > 0 %}<div><dt>Discount</dt><dd>-{{ totals.discount|money }}</dd></div>{% endif %}
+    <div><dt>Shipping</dt><dd>{% if totals.shipping > 0 %}{{ totals.shipping|money }}{% else %}Free{% endif %}</dd></div>
+    {% if totals.tax > 0 %}<div><dt>Tax</dt><dd>{{ totals.tax|money }}</dd></div>{% endif %}
+    <div class="grand"><dt>Total</dt><dd>{{ totals.total|money }}</dd></div>
+</dl>

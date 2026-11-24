@@ -1,0 +1,56 @@
+{% extends "shop/base.html" %}
+{% block title %}Dashboard | {{ SHOP.name }}{% endblock %}
+{% load shop_extras %}
+{% block content %}
+    <h1>Dashboard</h1>
+    <p><a class="btn" href="{% url 'admin:shop_product_changelist' %}">Products</a>
+       <a class="btn" href="{% url 'admin:shop_order_changelist' %}">Orders</a>
+       <a class="btn" href="{% url 'admin:shop_category_changelist' %}">Categories</a>
+       <a class="btn" href="{% url 'admin:shop_coupon_changelist' %}">Coupons</a>
+       <a class="btn" href="{% url 'admin:auth_user_changelist' %}">Customers</a></p>
+
+    <div class="stats">
+        <div class="card stat"><small class="muted">Paid revenue</small><strong>{{ revenue|money }}</strong></div>
+        <div class="card stat"><small class="muted">Orders</small><strong>{{ orders_count }}</strong></div>
+        <div class="card stat"><small class="muted">Pending</small><strong>{{ pending_count }}</strong></div>
+        <div class="card stat"><small class="muted">Customers</small><strong>{{ customers_count }}</strong></div>
+    </div>
+
+    <div class="two-col">
+        <section class="card pad">
+            <h2>Recent orders</h2>
+            <table class="table">
+                <tbody>
+                {% for order in recent %}
+                    <tr>
+                        <td><a href="{% url 'admin:shop_order_change' order.pk %}">{{ order.number }}</a></td>
+                        <td>{{ order.customer_name }}</td>
+                        <td><span class="pill pill-{{ order.status }}">{{ order.status_label }}</span></td>
+                        <td class="num">{{ order.total|money }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td class="muted">No orders yet.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <section class="card pad">
+            <h2>Low stock</h2>
+            <table class="table">
+                <tbody>
+                {% for product in low_stock %}
+                    <tr><td><a href="{% url 'admin:shop_product_change' product.pk %}">{{ product.name }}</a></td><td class="num">{{ product.stock }} left</td></tr>
+                {% empty %}
+                    <tr><td class="muted">All products are well stocked.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+    <section class="card pad">
+        <h2>Orders by status</h2>
+        <p>{% for label, total in by_status %}<span class="pill">{{ label }}: {{ total }}</span> {% endfor %}</p>
+    </section>
+{% endblock %}

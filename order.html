@@ -1,0 +1,43 @@
+{% extends "shop/base.html" %}
+{% block title %}Order {{ order.number }} | {{ SHOP.name }}{% endblock %}
+{% load shop_extras %}
+{% block content %}
+    <h1>Order {{ order.number }}</h1>
+    <p>Status: <span class="pill pill-{{ order.status }}">{{ order.status_label }}</span>
+       &middot; Payment: {{ order.payment_label }}
+       <span class="pill {% if order.is_paid %}pill-completed{% else %}pill-pending{% endif %}">{% if order.is_paid %}Paid{% else %}Not paid{% endif %}</span></p>
+
+    {% if can_pay %}
+        <form method="post" action="{% url 'order_pay' order.number %}">
+            {% csrf_token %}
+            <button class="btn btn-lg" type="submit">Pay now with {{ order.payment_label }}</button>
+        </form>
+    {% elif bank_transfer %}
+        <div class="card pad">
+            <strong>Bank transfer</strong>
+            <p>Please transfer {{ order.total|money }} using <strong>{{ order.number }}</strong> as the reference. Replace this text with your bank details in <code>shop/templates/shop/order.html</code>.</p>
+        </div>
+    {% endif %}
+
+    <div class="two-col">
+        <section class="card pad">
+            <h2>Items</h2>
+            <table class="table">
+                <thead><tr><th>Product</th><th>Price</th><th>Qty</th><th class="num">Total</th></tr></thead>
+                <tbody>
+                {% for item in order.items.all %}
+                    <tr><td>{{ item.name }}<br><small class="muted">{{ item.sku }}</small></td><td>{{ item.price|money }}</td><td>{{ item.quantity }}</td><td class="num">{{ item.total|money }}</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% include "shop/partials/totals.html" with totals=order %}
+        </section>
+
+        <section class="card pad">
+            <h2>Delivery</h2>
+            <p>{{ order.customer_name }}<br>{{ order.address }}<br>{{ order.city }}{% if order.state %}, {{ order.state }}{% endif %} {{ order.postcode }}<br>{{ order.country }}</p>
+            <p class="muted">{{ order.customer_email }}{% if order.customer_phone %} &middot; {{ order.customer_phone }}{% endif %}</p>
+            {% if order.notes %}<p><em>{{ order.notes }}</em></p>{% endif %}
+        </section>
+    </div>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "shop/base.html" %}
+{% block title %}Create an account | {{ SHOP.name }}{% endblock %}
+{% block content %}
+    <h1>Create an account</h1>
+    <form method="post" action="{% url 'register' %}" class="card pad narrow">
+        {% csrf_token %}
+        {% include "shop/partials/field.html" with field=form.name %}
+        {% include "shop/partials/field.html" with field=form.email %}
+        {% include "shop/partials/field.html" with field=form.password1 %}
+        {% include "shop/partials/field.html" with field=form.password2 %}
+        <button class="btn" type="submit">Register</button>
+        <p class="muted">Already registered? <a href="{% url 'login' %}">Log in</a></p>
+    </form>
+{% endblock %}

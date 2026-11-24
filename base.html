@@ -1,0 +1,56 @@
+{% load static shop_extras %}<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{{ SHOP.name }}{% endblock %}</title>
+    <meta name="description" content="{% block description %}{{ SHOP.tagline }}{% endblock %}">
+    <link rel="icon" type="image/svg+xml" href="{% static 'shop/favicon.svg' %}">
+    <link rel="stylesheet" href="{% static 'shop/css/shop.css' %}">
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-row">
+        <a class="brand" href="{% url 'home' %}">{{ SHOP.name }}</a>
+
+        <form class="search" action="{% url 'shop' %}" method="get" role="search">
+            <input type="search" name="q" value="{{ request.GET.q }}" placeholder="Search products" aria-label="Search products">
+            <button type="submit" class="btn">Search</button>
+        </form>
+
+        <nav class="top-links" aria-label="Account">
+            {% if user.is_authenticated %}
+                {% if user.is_staff %}<a href="{% url 'dashboard' %}">Dashboard</a><a href="{% url 'admin:index' %}">Admin</a>{% endif %}
+                <a href="{% url 'account' %}">My account</a>
+                <form method="post" action="{% url 'logout' %}" class="inline">{% csrf_token %}<button type="submit" class="link">Log out</button></form>
+            {% else %}
+                <a href="{% url 'login' %}">Log in</a>
+                <a href="{% url 'register' %}">Register</a>
+            {% endif %}
+            <a class="cart-link" href="{% url 'cart' %}">Cart <span class="count">{{ cart_count }}</span></a>
+        </nav>
+    </div>
+    <nav class="menu" aria-label="Categories">
+        <div class="container">
+            <a href="{% url 'shop' %}">All products</a>
+            {% for c in menu_categories %}<a href="{% url 'category' c.slug %}">{{ c.name }}</a>{% endfor %}
+        </div>
+    </nav>
+</header>
+
+<main class="container">
+    {% include "shop/partials/messages.html" %}
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="site-footer">
+    <div class="container footer-row">
+        <span>&copy; {% now "Y" %} {{ SHOP.name }}</span>
+        <span>
+            <a href="{% url 'track' %}">Track an order</a>
+            &middot; <a href="mailto:{{ SHOP.contact_email }}">{{ SHOP.contact_email }}</a>
+        </span>
+    </div>
+</footer>
+</body>
+</html>

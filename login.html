@@ -1,0 +1,14 @@
+{% extends "shop/base.html" %}
+{% block title %}Log in | {{ SHOP.name }}{% endblock %}
+{% block content %}
+    <h1>Log in</h1>
+    <form method="post" action="{% url 'login' %}" class="card pad narrow">
+        {% csrf_token %}
+        {% for error in form.non_field_errors %}<small class="error">{{ error }}</small>{% endfor %}
+        {% include "shop/partials/field.html" with field=form.username %}
+        {% include "shop/partials/field.html" with field=form.password %}
+        <input type="hidden" name="next" value="{{ next }}">
+        <button class="btn" type="submit">Log in</button>
+        <p class="muted"><a href="{% url 'password_reset' %}">Forgot your password?</a> &middot; <a href="{% url 'register' %}">Create an account</a></p>
+    </form>
+{% endblock %}

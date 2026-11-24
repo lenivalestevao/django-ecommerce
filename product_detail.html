@@ -1,0 +1,54 @@
+{% extends "shop/base.html" %}
+{% block title %}{{ product.name }} | {{ SHOP.name }}{% endblock %}
+{% load shop_extras %}
+{% block description %}{{ product.short_description }}{% endblock %}
+{% block content %}
+    <p class="crumbs">
+        <a href="{% url 'home' %}">Home</a> /
+        {% if product.category %}<a href="{% url 'category' product.category.slug %}">{{ product.category.name }}</a> /{% endif %}
+        {{ product.name }}
+    </p>
+
+    <div class="product-detail">
+        <div class="card detail-image">
+            {% if product.image_url %}
+                <img src="{{ product.image_url }}" alt="{{ product.name }}">
+            {% else %}
+                <span class="placeholder big" aria-hidden="true">{{ product.name|slice:":1"|upper }}</span>
+            {% endif %}
+        </div>
+
+        <div>
+            <h1>{{ product.name }}</h1>
+            <p class="muted">SKU {{ product.sku }}</p>
+            <p class="price big">
+                {% if product.on_sale %}<s>{{ product.price|money }}</s> {% endif %}
+                <strong>{{ product.current_price|money }}</strong>
+            </p>
+            <p>{{ product.short_description }}</p>
+
+            {% if product.in_stock %}
+                <p class="ok">In stock ({{ product.stock }} available)</p>
+                <form method="post" action="{% url 'cart_add' product.slug %}" class="buy">
+                    {% csrf_token %}
+                    <input type="number" name="quantity" value="1" min="1" max="{% if product.stock > 99 %}99{% else %}{{ product.stock }}{% endif %}" aria-label="Quantity">
+                    <button class="btn btn-lg" type="submit">Add to cart</button>
+                </form>
+            {% else %}
+                <p class="bad">Out of stock</p>
+            {% endif %}
+
+            {% if product.description %}
+                <h2>Description</h2>
+                <div class="prose">{{ product.description|linebreaks }}</div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if related %}
+        <h2>Related products</h2>
+        <div class="grid">
+            {% for product in related %}{% include "shop/partials/product_card.html" %}{% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}

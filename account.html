@@ -1,0 +1,33 @@
+{% extends "shop/base.html" %}
+{% block title %}My account | {{ SHOP.name }}{% endblock %}
+{% load shop_extras %}
+{% block content %}
+    <h1>My account</h1>
+    <div class="two-col">
+        <section class="card pad">
+            <h2>My details</h2>
+            <form method="post" action="{% url 'account' %}">
+                {% csrf_token %}
+                {% include "shop/partials/field.html" with field=form.name %}
+                {% include "shop/partials/field.html" with field=form.email %}
+                {% include "shop/partials/field.html" with field=form.password1 %}
+                {% include "shop/partials/field.html" with field=form.password2 %}
+                <button class="btn" type="submit">Save</button>
+            </form>
+        </section>
+
+        <section class="card pad">
+            <h2>My orders</h2>
+            {% for order in orders %}
+                <p>
+                    <a href="{% url 'order' order.number %}"><strong>{{ order.number }}</strong></a>
+                    <span class="pill pill-{{ order.status }}">{{ order.status_label }}</span><br>
+                    <small class="muted">{{ order.created_at|date:"M j, Y" }} &middot; {{ order.total|money }}</small>
+                </p>
+            {% empty %}
+                <p class="muted">You have not placed any orders yet.</p>
+            {% endfor %}
+            {% include "shop/partials/pagination.html" %}
+        </section>
+    </div>
+{% endblock %}

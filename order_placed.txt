@@ -1,0 +1,13 @@
+{% load shop_extras %}{% autoescape off %}Thank you for your order, {{ order.customer_name }}!
+
+We received order {{ order.number }}.
+
+{% for item in items %}{{ item.quantity }} x {{ item.name }}  {{ item.total|money }}
+{% endfor %}
+Total: {{ order.total|money }}
+Payment: {{ order.payment_label }}
+
+View your order: {{ link }}
+
+{{ SHOP.name }}
+{% endautoescape %}

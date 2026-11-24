@@ -1,0 +1,6 @@
+{% load shop_extras %}{% autoescape off %}New order {{ order.number }}
+
+{{ order.customer_name }} ({{ order.customer_email }}) placed an order for {{ order.total|money }} with {{ order.payment_label }}.
+
+Open in admin: {{ link }}
+{% endautoescape %}

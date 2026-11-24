@@ -1,0 +1,43 @@
+{% extends "shop/base.html" %}
+{% block title %}Shop | {{ SHOP.name }}{% endblock %}
+{% block content %}
+    <div class="shop-layout">
+        <aside class="filters card">
+            <h3>Categories</h3>
+            <ul class="plain">
+                <li><a href="{% url 'shop' %}"{% if not category %} class="active"{% endif %}>All products</a></li>
+                {% for c in categories %}
+                    <li><a href="{% url 'category' c.slug %}"{% if category and category.pk == c.pk %} class="active"{% endif %}>{{ c.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </aside>
+
+        <section>
+            <div class="toolbar">
+                <h1>{% if category %}{{ category.name }}{% elif term %}Results for "{{ term }}"{% else %}All products{% endif %}</h1>
+                <form method="get" class="sort">
+                    {% if term %}<input type="hidden" name="q" value="{{ term }}">{% endif %}
+                    <label for="sort" class="muted">Sort by</label>
+                    <select id="sort" name="sort" onchange="this.form.submit()">
+                        {% for key, label in sorts %}
+                            <option value="{{ key }}"{% if sort == key %} selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                    <noscript><button class="btn">Apply</button></noscript>
+                </form>
+            </div>
+
+            {% if category.description %}<p class="muted">{{ category.description }}</p>{% endif %}
+
+            <div class="grid">
+                {% for product in products %}
+                    {% include "shop/partials/product_card.html" %}
+                {% empty %}
+                    <p class="muted">Nothing found. Try a different search.</p>
+                {% endfor %}
+            </div>
+
+            {% include "shop/partials/pagination.html" %}
+        </section>
+    </div>
+{% endblock %}

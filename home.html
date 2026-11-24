@@ -1,0 +1,34 @@
+{% extends "shop/base.html" %}
+{% block title %}Home | {{ SHOP.name }}{% endblock %}
+{% block content %}
+    <section class="hero">
+        <h1>{{ SHOP.name }}</h1>
+        <p>{{ SHOP.tagline }}</p>
+        <a class="btn btn-lg" href="{% url 'shop' %}">Shop now</a>
+    </section>
+
+    <section class="category-strip" aria-label="Categories">
+        {% for c in categories %}
+            <a class="card cat-tile" href="{% url 'category' c.slug %}">
+                <strong>{{ c.name }}</strong>
+                <small class="muted">{{ c.products_count }} product{{ c.products_count|pluralize }}</small>
+            </a>
+        {% endfor %}
+    </section>
+
+    {% if featured %}
+        <h2>Featured products</h2>
+        <div class="grid">
+            {% for product in featured %}{% include "shop/partials/product_card.html" %}{% endfor %}
+        </div>
+    {% endif %}
+
+    <h2>New arrivals</h2>
+    <div class="grid">
+        {% for product in latest %}
+            {% include "shop/partials/product_card.html" %}
+        {% empty %}
+            <p class="muted">No products yet. Add some from the admin panel.</p>
+        {% endfor %}
+    </div>
+{% endblock %}
